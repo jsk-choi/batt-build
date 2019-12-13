@@ -1,0 +1,246 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="battcir.css">
+</head>
+<body>
+
+    <div id="result"></div>
+
+    <section>
+        <h3>Choose Type</h3>
+        <table id="tblType">
+            <thead>
+                <tr>
+                    <th>Series</th>
+                    <th>Parallel</th>
+                    <th>Cell Type</th>
+                    <th>Stacked</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <select id="batt-series" class="selection">
+                            <option value="--">--</option>
+                            <option value="10">10s</option>
+                            <option value="12">12s</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="batt-parallel" class="selection">
+                            <option value="--">--</option>
+                            <option value="1">1p</option>
+                            <option value="2">2p</option>
+                            <option value="3">3p</option>
+                            <option value="4">4p</option>
+                            <option value="5">5p</option>
+                            <option value="6">6p</option>
+                            <option value="7">7p</option>
+                            <option value="8">8p</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="batt-celltype" class="selection"></select>
+                    </td>
+                    <td>
+                        <input id="batt-stacked" class="selection" type="checkbox" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!--<br />
+    <section id="secSpecs" style="display: none;">
+    </section>
+
+    <br />
+    <section id="secPrice" style="display: none;">
+    </section>-->
+
+    <br />
+    <canvas id="myCanvas" height="500" ></canvas>
+
+    <br />
+    <section id="secCompare" style="display: none;">
+    </section>
+
+
+    <script id="tplSpecs" type="text/x-jsrender">
+        <h3>Specs</h3>
+        <table id="tblSpecs">
+            <tbody>
+                <tr>
+                    <td>
+                        Battery
+                    </td>
+                    <td>
+                        {{:batt.desc}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Voltage
+                    </td>
+                    <td>
+                        {{:batt.volt_nom}}v nominal<br />
+                        {{:batt.volt_max}}v max
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Watt-hour
+                    </td>
+                    <td>
+                        {{toFixedZero:batt.wh}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Con't Discharge
+                    </td>
+                    <td>
+                        {{:batt.discharge}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Range (est)
+                        <br />
+                        <span>&nbsp;&nbsp;&nbsp;urethane</span>
+                        <br />
+                        <span>&nbsp;&nbsp;&nbsp;pnumatic</span>
+                    </td>
+                    <td>
+                        <br />
+                        {{:batt.range_mi}}mi ({{:batt.range_km}}km)
+                        <br />
+                        {{:batt.range_mi / 2}}mi ({{:(batt.range_km / 2).toFixed(0)}}km)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Length
+                    </td>
+                    <td>
+                        {{:batt.dim_length_mm}}mm
+                        ({{:batt.dim_length_in}}")
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Width
+                    </td>
+                    <td>
+                        {{:batt.dim_width_mm}}mm
+                        ({{:batt.dim_width_in}}")
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Height
+                    </td>
+                    <td>
+                        {{:batt.dim_height_mm}}mm
+                        ({{:batt.dim_height_in}}")
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Weight
+                    </td>
+                    <td>
+                        {{:batt.weight_kg.toFixed(1)}}kg
+                        ({{:batt.weight_lb.toFixed(1)}}lb")
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </script>
+
+    <script id="tplPrice" type="text/x-jsrender">
+        <h3>Cost</h3>
+        <table id="tblCost">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>$</th>
+                    <th>Qt</th>
+                    <th>$$</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{for costs}}
+                <tr>
+                    <td>
+                        {{:item}}
+                    </td>
+                    <td>
+                        {{:price}}
+                    </td>
+                    <td>
+                        {{:qt}}
+                    </td>
+                    <td>
+                        {{:total}}
+                    </td>
+                </tr>
+                {{/for}}
+            </tbody>
+        </table>
+    </script>
+
+    <script id="tplCompare" type="text/x-jsrender">
+        <h3>Compare</h3>
+        <table id="tblCompare">
+            <thead>
+                <tr>
+                    <th>Cell</th>
+                    <th>Price</th>
+                    <th>Wh</th>
+                    <th>Range - mi</th>
+                    <th>Range - km</th>
+                    <th>$/Wh</th>
+                    <th>Dimensions - mm</th>
+                    <th>Dimensions - in</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{for data}}
+                <tr>
+                    <td>
+                        {{:cell}}
+                    </td>
+                    <td>
+                        {{:price}}
+                    </td>
+                    <td>
+                        {{:wh}}
+                    </td>
+                    <td>
+                        {{:range_mi}}
+                    </td>
+                    <td>
+                        {{:range_km}}
+                    </td>
+                    <td>
+                        {{:cost_wh}}
+                    </td>
+                    <td>
+                        {{:dim_mm}}
+                    </td>
+                    <td>
+                        {{:dim_in}}
+                    </td>
+                </tr>
+                {{/for}}
+            </tbody>
+        </table>
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
+    <script src="jsrender.min.js"></script>
+    <script src="battcir.js"></script>
+</body>
+</html>      
