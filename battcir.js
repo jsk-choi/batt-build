@@ -462,7 +462,10 @@ $(() => {
     $('.selection').change((e) => {
 
         // ALL OPTIONS SELECTED
-        if (!($('#batt-series')[0].selectedIndex > 0 && $('#batt-parallel')[0].selectedIndex > 0 && $('#batt-celltype')[0].selectedIndex > 0)) {
+        if (!(
+            $('#batt-series')[0].selectedIndex > 0 && 
+            $('#batt-parallel')[0].selectedIndex > 0 && 
+            $('#batt-celltype')[0].selectedIndex > 0)) {
             return;
         }
 
@@ -493,6 +496,13 @@ $(() => {
         let url = 'index.html?sel=' + JSON.stringify(query_param);
 
         history.pushState(state, title, url)
+
+        console.log(decodeURIComponent(window.location.search));
+        var urlParams = new URLSearchParams(decodeURIComponent(window.location.search));
+        //const urlParams = new URLSearchParams(window.location.search);
+        const myParam = JSON.parse(urlParams.get('sel'));
+        console.log(myParam);
+
 
         //var thisSelection = batt_calc(batt, cell);
         
