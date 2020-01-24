@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html>
+<input type="number" value="1" id="num" />
+<input type="button" value="ass" id="btn" />
+
+<head>
+    <script>
+        window.onload = function () {
+
+            let cities = [
+                'Yosemite',
+                'Philli',
+                'NYC',
+                'SF',
+                'NOLA',
+                'Chicago',
+                'Reno'
+            ];
+
+            let doTally = () => {
+                return cities.sort().map(x => {
+                    return {
+                        label: x,
+                        y: 0
+                    };
+                });
+            };
+
+            let tally = doTally();
+            console.log(tally);
+
+            var chart = new CanvasJS.Chart("chartContainer", {
+
+                animationEnabled: true,
+                title: {
+                    text: "Joey's stupid fuckin hat bullshit"
+                },
+                axisX: {
+                    interval: 1
+                },
+                axisY2: {
+                    interlacedColor: "rgba(1,77,101,.2)",
+                    gridColor: "rgba(1,77,101,.1)"
+                },
+                data: [{
+                    type: "bar",
+                    name: "companies",
+                    axisYType: "secondary",
+                    color: "#014D65",
+                    dataPoints: tally
+                }]
+
+            });
+            chart.render();
+
+            $('#btn').click(() => {
+
+                tally = doTally();
+
+                let num = parseInt($('#num').val());
+                let max = tally.length;
+
+                for (i = 0; i < num; i++) {
+                    let rand = Math.floor(Math.random() * Math.floor(max));
+                    tally[rand].y += 1;
+                }
+
+                setTimeout(() => {
+                    console.log(tally);
+                    chart.render();
+                }, 1000);
+
+            });
+        }
+
+
+    </script>>
+</head>
+
+<body>
+    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
+</body>
+
+</html>
+
+<!-- <!DOCTYPE HTML>
+<html>
+<head>
+    
+</head>
+<body>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
+    <script>
+
+        let cities = [
+            'Yosemite',
+            'Philli',
+            'NYC',
+            'SF',
+            'NOLA',
+            'Chicago',
+            'Reno'
+        ].sort();
+
+        let tally = cities.map(x => {
+            return {
+                city: x,
+                ct: 0
+            };
+        });
+
+    </script>
+</body>
+</html>       -->

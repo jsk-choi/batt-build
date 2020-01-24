@@ -149,10 +149,10 @@ let drawBatt = (p_batt, p_cell) => {
     // TOP VIEW DIMS
     // X, Y, W, H
     context.strokeRect(
-        centerX - radius, 
-        centerY - (radius * 2), 
-        lenEnd - (radius * 5), 
-        1); 
+        centerX - radius,
+        centerY - (radius * 2),
+        lenEnd - (radius * 5),
+        1);
     context.strokeRect(
         centerX - radius,
         centerY - (radius * 2),
@@ -366,15 +366,15 @@ let batt_calc = (p_batt, p_cell) => {
 
     if (cell_qt < 25) {
         cell_labor = costs.cell_labor.high;
-    } 
+    }
     else if (cell_qt < 51) {
         cell_labor = costs.cell_labor.med;
-    } 
+    }
     else {
         cell_labor = costs.cell_labor.low;
     }
 
-    p_batt.dim_length_mm = ((p_batt.s * p_batt.p) / (p_batt.stack ? 4 : 2)) * p_cell.dia;        
+    p_batt.dim_length_mm = ((p_batt.s * p_batt.p) / (p_batt.stack ? 4 : 2)) * p_cell.dia;
     p_batt.dim_width_mm = (p_cell.len * 2) + 10;
     p_batt.dim_height_mm = (((p_cell.dia * 1.28) * (p_batt.stack ? 2 : 1)) + 3).toFixed(0);
 
@@ -392,7 +392,7 @@ let batt_calc = (p_batt, p_cell) => {
 
     p_batt.weight_kg = ((p_cell.weight * cell_qt) / 1000) * 1.1;
     p_batt.weight_lb = p_batt.weight_kg * convert.kgToLb;
-    
+
     let battCalc = {
         batt: p_batt,
         cell: p_cell,
@@ -447,8 +447,55 @@ let batt_calc = (p_batt, p_cell) => {
             return sum + parseFloat(itm.total);
         }, 0).toFixed(2)
     });
-    
+
     return battCalc;
+};
+
+let get_uri = () => {
+    console.log(decodeURIComponent(window.location.search));
+    var urlParams = new URLSearchParams(decodeURIComponent(window.location.search));
+    //const urlParams = new URLSearchParams(window.location.search);
+    const myParam = JSON.parse(urlParams.get('sel'));
+    console.log(myParam);
+
+    return myParam;
+};
+
+let set_uri = () => {
+    // ALL OPTIONS SELECTED
+    if (!(
+        $('#batt-series')[0].selectedIndex > 0 &&
+        $('#batt-parallel')[0].selectedIndex > 0 &&
+        $('#batt-celltype')[0].selectedIndex > 0)) {
+        return;
+    }
+
+    $('#tblCost tbody').empty();
+    $('#tblCost').parent().show();
+    $('#tblSpecs').parent().show();
+
+    // SELECTED CELL
+    cell = celltypes.filter(x => { return x.cell == $('#batt-celltype').val() }).shift();
+
+    // BATTERY SPECS
+    batt = {
+        s: parseInt($('#batt-series').val()),
+        p: parseInt($('#batt-parallel').val()),
+        stack: $('#batt-stacked').prop('checked')
+    };
+
+    let query_param = {
+        "s": batt.s,
+        "p": batt.p,
+        "stack": batt.stack,
+        "cell": cell.cell
+    };
+
+    let state = { 'page_id': 1, 'user_id': 5 }
+    let title = ''
+    let url = 'index.html?sel=' + JSON.stringify(query_param);
+
+    history.pushState(state, title, url);
 };
 
 $(() => {
@@ -458,54 +505,14 @@ $(() => {
     celltypes.forEach((cell) => {
         $sel_cells.append($("<option/>").attr("value", cell.cell).text(cell.cell));
     });
-    
+
     $('.selection').change((e) => {
 
-        // ALL OPTIONS SELECTED
-        if (!(
-            $('#batt-series')[0].selectedIndex > 0 && 
-            $('#batt-parallel')[0].selectedIndex > 0 && 
-            $('#batt-celltype')[0].selectedIndex > 0)) {
-            return;
-        }
-
-        $('#tblCost tbody').empty();
-        $('#tblCost').parent().show();
-        $('#tblSpecs').parent().show();
-
-        // SELECTED CELL
-        cell = celltypes.filter(x => { return x.cell == $('#batt-celltype').val() }).shift();
-
-        // BATTERY SPECS
-        batt = {
-            s: parseInt($('#batt-series').val()),
-            p: parseInt($('#batt-parallel').val()),
-            stack: $('#batt-stacked').prop('checked')        
-        };
-
-        let query_param = {
-            "s": batt.s,
-            "p": batt.p,
-            "stack": batt.stack,
-            "cell": cell.cell
-        };
-
-
-        let state = { 'page_id': 1, 'user_id': 5 }
-        let title = ''
-        let url = 'index.html?sel=' + JSON.stringify(query_param);
-
-        history.pushState(state, title, url)
-
-        console.log(decodeURIComponent(window.location.search));
-        var urlParams = new URLSearchParams(decodeURIComponent(window.location.search));
-        //const urlParams = new URLSearchParams(window.location.search);
-        const myParam = JSON.parse(urlParams.get('sel'));
-        console.log(myParam);
+        set_uri();
 
 
         //var thisSelection = batt_calc(batt, cell);
-        
+
         //var tplSpecs = $.templates("tplSpecs", {
         //    markup: '#tplSpecs',
         //    converters: {
